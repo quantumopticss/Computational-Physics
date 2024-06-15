@@ -1,45 +1,17 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
-def fun(t,x,w):
-    dxdt = np.array([ x[1],-(w**2*x[0])])
-    return dxdt
-
-def ode_test():
-    ## users set
-    tspan = np.array([0,4])
-    x0 = np.array([2,0])
-    
-    ## operate
-    tlist,xlist = odeint(fun,tspan[0],x0,tspan[1],args = (3,))
-    ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
-    
-    ## figrue
-    plt.figure(1)
-    plt.plot(tlist,xlist[:,0],label = 'Position23i')
-    plt.plot(tlist,xlist[:,1],label = 'Velocity23i')
-    plt.plot(ttlist,xxlist[:,0],label = 'Position23')
-    plt.plot(ttlist,xxlist[:,1],label = 'Velocity23')
-    plt.legend()
-    plt.show()
-
-    plt.figure(2)
-    plt.plot(xlist[:,0],xlist[:,1],label = 'Phase')
-    plt.legend()
-    plt.show()
-
-    plt.figure(3)
-    nt = np.size(tlist)
-    ntt = np.size(ttlist)
-    nt_list = np.arange(1,nt+1,1)
-    ntt_list = np.arange(1,ntt+1,1)
-    plt.plot(nt_list,tlist,label = 'implicity')
-    plt.plot(ntt_list,ttlist,label = 'explicity')
-    plt.legend()
-    plt.title('time step')
-    plt.show()
 
 def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+    """ 
+    explicit ode solver using RK23 method
+    
+    ***************************************
+    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
+    t_start: start of the 'time'
+    initial: initial condition
+    t_end: end of the time
+    step_max: max time step for ode solving
+    TOL: value to control the error
+    """
     ## begin and validity check
     if t_start <= t_end:
         ValueError('t_start should smaller than t_end') 
@@ -82,6 +54,17 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     return tlist,xlist
 
 def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+    """ 
+    explicit ode solver using RK45 method
+    
+    ***************************************
+    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
+    t_start: start of the 'time'
+    initial: initial condition
+    t_end: end of the time
+    step_max: max time step for ode solving
+    TOL: value to control the error
+    """
     ## begin and validity check
     if t_start <= t_end:
         ValueError('t_start should smaller than t_end') 
@@ -127,6 +110,17 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     return tlist,xlist
 
 def ode23i(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+    """ 
+    implicit ode solver using RK23 method
+    
+    ***************************************
+    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
+    t_start: start of the 'time'
+    initial: initial condition
+    t_end: end of the time
+    step_max: max time step for ode solving
+    TOL: value to control the error
+    """
     ## begin and validity check
     if t_start <= t_end:
         ValueError('t_start should smaller than t_end') 
@@ -177,14 +171,26 @@ def ode23i(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     ## return
     return tlist,xlist
 
-def odeint(fun,t_start,initial,t_end,args=(),step = 1e-2,step_max = 1e-3,TOL = 1e-5):
-    if step <= step_max:
-        ValueError('step should be larger than step_max')
+def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-2,step_max = 1e-3,TOL = 1e-5):
+    """ 
+    explicit ode solver using RK45 method and will output the result in equal time step
+    
+    ***************************************
+    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
+    t_start: start of the 'time'
+    initial: initial condition
+    t_end: end of the time
+    t_step: time step of the output timelist
+    step_max: max time step for ode solving
+    TOL: value to control the error
+    """
+    if tstep <= step_max:
+        ValueError('tstep should be larger than step_max')
 
     tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
 
-    tlist = np.arange(t_start,t_end+step,step)
-    tlist.reshape(-1,1)
+    tlist = np.arange(t_start,t_end+tstep,tstep)
+    tlist.reshape(-1,1) # to [n,1] array
     xlist = np.array([initial])
     i = 1
     while(i < np.size(tlist)):
@@ -231,5 +237,44 @@ def ode00(fun,t_start,initial,t_end,args=(),step = 1e-2):
     ## return
     return tlist,xlist
 
+def fun(t,x,w):
+    dxdt = np.array([ x[1],-(w**2*x[0])])
+    return dxdt
+
+def ode_test():
+    ## users set
+    tspan = np.array([0,4])
+    x0 = np.array([2,0])
+    
+    ## operate
+    tlist,xlist = ode23i(fun,tspan[0],x0,tspan[1],args = (3,))
+    ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
+    
+    ## figrue
+    plt.figure(1)
+    plt.plot(tlist,xlist[:,0],label = 'Position23i')
+    plt.plot(tlist,xlist[:,1],label = 'Velocity23i')
+    plt.plot(ttlist,xxlist[:,0],label = 'Position23')
+    plt.plot(ttlist,xxlist[:,1],label = 'Velocity23')
+    plt.legend()
+    plt.show()
+
+    plt.figure(2)
+    plt.plot(xlist[:,0],xlist[:,1],label = 'Phase')
+    plt.legend()
+    plt.show()
+
+    plt.figure(3)
+    nt = np.size(tlist)
+    ntt = np.size(ttlist)
+    nt_list = np.arange(1,nt+1,1)
+    ntt_list = np.arange(1,ntt+1,1)
+    plt.plot(nt_list,tlist,label = 'implicity')
+    plt.plot(ntt_list,ttlist,label = 'explicity')
+    plt.legend()
+    plt.title('time step')
+    plt.show()
+
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
     ode_test() 
