@@ -214,7 +214,11 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-2,step_max = 1e-3,TOL = 
     
     return tlist, xlist
 
-def ode00(fun,t_start,initial,t_end,args=(),step = 1e-2):
+def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+    """
+    we do not recommend using this one to solve ode, but it may 
+    help when debuging or testing, parameters set are the same as other odesolvers 
+    """
 ## begin and validity check
     if t_start <= t_end:
         ValueError('t_start should smaller than t_end') 
@@ -228,8 +232,8 @@ def ode00(fun,t_start,initial,t_end,args=(),step = 1e-2):
     ## operate
     while(t < t_end):
         ## ode body
-        x = x + step*fun(t,x,*args)
-        t += step
+        x = x + step_max*fun(t,x,*args)
+        t += step_max
 
         tlist = np.vstack((tlist,t))
         xlist = np.concatenate((xlist,np.array([x])),axis = 0)
