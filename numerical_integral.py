@@ -11,7 +11,7 @@ def integral_subcalculate(fun,x_start,x_end,args = ()):
     return I
 
 def integral_operate(fun,xspan,args = (),TOL = 1e-6):
-    N = 4
+    N = 6
     int_space = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
     j = 0
@@ -68,22 +68,20 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
             step = 10
             result = integral_operate(fun,[x0,x0+step],args,TOL)
             e = 1
-            x0 += step
             while(e>=TOL):
+                x0 += step
                 add = integral_operate(fun,[x0,x0+step],args,TOL)
                 result += add
-                x0 += step
                 e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,0]:
             step = 10
             result = integral_operate(fun,[x1-step,x1],args,TOL)
             e = 1
-            x1 -= step
             while(e>=TOL):
+                x1 -= step
                 add = integral_operate(fun,[x1-step,x1],args,TOL)
                 result += add
-                x1 -= step
                 e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,1]:
@@ -94,20 +92,19 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
             e = 1
             x0 += step
             while(e>=TOL):
+                x0 += step
                 add = integral_operate(fun,[x0,x0+step],args,TOL)
                 result_f += add
-                x0 += step
                 e = np.abs( add/np.max([np.abs(result_f),1])  )
 
             #[-1,0]
             x1 = 0
             result_b = integral_operate(fun,[x1-step,x1],args,TOL)
             e = 1
-            x1 -= step
             while(e>=TOL):
+                x1 -= step
                 add = integral_operate(fun,[x1-step,x1],args,TOL)
                 result_b += add
-                x1 -= step
                 e = np.abs( add/np.max([np.abs(result_b),1])  )
 
             result = result_f + result_b
@@ -131,7 +128,7 @@ def integral2D_subcalculate(yxfun,funy_down,funy_up,x_start,x_end,args=()):
     return (result*(x_end - x_start)/90)
 
 def integral2D_operate(yxfun,funy_down,funy_up,xspan,args=(),TOL = 1e-6):
-    N = 4
+    N = 6
     int_xspace = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
     j = 0
@@ -183,16 +180,51 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
     if x0 == -np.infty:
         process[0] = -1
     
-    ## integral
+    ## integral -- integral2D_operate(yxfun,funy_down,funy_up,xspan,args,TOL)
     match process:
         case [0,1]:
-            1
+            step = 10
+            result = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
+            e = 1
+            while(e>=TOL):
+                x0 += step
+                add = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
+                result += add
+                e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,0]:
-            1
+            step = 10
+            result = integral2D_operate(yxfun,funy_down,funy_up,[x1-step,x1],args,TOL)
+            e = 1
+            while(e>=TOL):
+                x1 -= step
+                add = integral2D_operate(yxfun,funy_down,funy_up,[x1-step,x1],args,TOL)
+                result += add
+                e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,1]:
-            1
+            # [0,1]
+            x0 = 0
+            step = 10
+            result_f = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
+            e = 1
+            while(e>=TOL):
+                x0 += step
+                add = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
+                result_f += add
+                e = np.abs( add/np.max([np.abs(result_f),1])  )
+
+            #[-1,0]
+            x1 = 0
+            result_b = integral2D_operate(yxfun,funy_down,funy_up,[x1-step,x1],args,TOL)
+            e = 1
+            while(e>=TOL):
+                x1 -= step
+                add = integral2D_operate(yxfun,funy_down,funy_up,[x1-step,x1],args,TOL)
+                result_b += add
+                e = np.abs( add/np.max([np.abs(result_b),1])  )
+
+            result = result_f + result_b
 
         case _:
             result = integral2D_operate(yxfun,funy_down,funy_up,xspan,args,TOL)
@@ -216,7 +248,7 @@ def int_integral(ylist,xlist,order = 4,TOL = 1e-6):
 
 # testing functions  
 def yxfun(y,x):
-    f = y**2*x**2
+    f = y**2*np.exp(-x**2)
     return f
 
 if __name__ == "__main__":
@@ -225,9 +257,9 @@ if __name__ == "__main__":
 
     funy_up = lambda x: 1 
     funy_down = lambda x: 0
-    xspan = [0,1]
-    S = integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-4)
-    print(S)
-
+    xspan = [0,+np.infty]
+    S = integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-12)
+    print(S*1e10)
+    print(np.sqrt(np.pi)*1e10/6)
 
     
