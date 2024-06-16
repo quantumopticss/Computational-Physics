@@ -11,11 +11,11 @@ def integral_subcalculate(fun,x_start,x_end,args = ()):
     return I
 
 def integral_operate(fun,xspan,args = (),TOL = 1e-6):
-    N = 6
+    N = 8
     int_space = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
     j = 0
-    n = 4
+    n = 8
     while(j<(N-1)): ## integral in int_space
         n = np.max([N//2,n//2])
         erf = 1
@@ -128,11 +128,11 @@ def integral2D_subcalculate(yxfun,funy_down,funy_up,x_start,x_end,args=()):
     return (result*(x_end - x_start)/90)
 
 def integral2D_operate(yxfun,funy_down,funy_up,xspan,args=(),TOL = 1e-6):
-    N = 6
+    N = 8
     int_xspace = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
     j = 0
-    n = 4
+    n = 8
     while(j<(N-1)): ## integral in int_space
         n = np.max([N//2,n//2])
         erf = 1
