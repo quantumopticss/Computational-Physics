@@ -11,7 +11,7 @@ def fun(ix,x,d,lbd):
     # amplitude(x)*h(y-x)
     r = np.sqrt(d**2+(x-ix)**2)
     k = 2*np.pi/lbd
-    f = np.exp(-(0+1j)*k*r)/(lbd*r**2)
+    f = np.exp(-1j*k*r)/(lbd*r)
     return f
 
 def nd_main():
@@ -19,7 +19,7 @@ def nd_main():
     # dimension = 1[um]
     lbd = 1.55 # 1.55um
     d = 2*1e3
-    a = 2
+    a = 200
 
     imageL = 400
     xlist = np.arange(-0.2*imageL,0.6*imageL+a,a)
@@ -27,7 +27,7 @@ def nd_main():
     i = 0
     while(i < np.size(xlist)):
         x = xlist[i]
-        imagelist[i] = (0+1j)*d*ni.integral(fun,[0,np.infty],args = (x,d,lbd,),h_step = 0.1,TOL = 1e-10)
+        imagelist[i] = 1j*d*ni.integral(fun,[0,np.infty],args = (x,d,lbd,),TOL = 1e-4)
         i += 1
 
     imagelist = imagelist*1e12
