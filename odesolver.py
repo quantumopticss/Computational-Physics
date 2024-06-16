@@ -214,7 +214,7 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-2,step_max = 1e-3,TOL = 
     
     return tlist, xlist
 
-def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1):
     """
     we do not recommend using this one to solve ode, but it may 
     help when debuging or testing, parameters set are the same as other odesolvers 
