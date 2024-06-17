@@ -1,5 +1,6 @@
 import numpy as np
 
+## explicit odesolvers
 def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     """ 
     explicit ode solver using RK23 method
@@ -109,7 +110,53 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     ## return
     return tlist,xlist
 
-def odeii(fun,t_start,initial,t_end,args=(),t_step = 1e-1,TOL = 1e-5,order:int = 4):
+#def ode89(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+
+def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 1e-5):
+    """ 
+    explicit ode solver using RK45 method and will output the result in equal time step
+    
+    ***************************************
+    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
+    t_start: start of the 'time'
+    initial: initial condition
+    t_end: end of the time
+    t_step: time step of the output timelist
+    step_max: max time step for ode solving
+    TOL: value to control the error
+    """
+    if tstep <= step_max:
+        ValueError('tstep should be larger than step_max')
+
+    tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
+
+    tlist = np.arange(t_start,t_end+tstep,tstep)
+    tlist.reshape(-1,1) # to [n,1] array
+    xlist = np.array([initial])
+    i = 1
+    while(i < np.size(tlist)):
+        n = np.sum((tlist0 <= tlist[i]),axis = None) - 1 # location of the nearest before time and step is lower than the TOLed step
+        
+        t = tlist0[n]
+        h = tlist[i] - tlist0[n]
+        x = xlist0[n]
+
+        dxdt_1 = fun(t,x,*args)
+        dxdt_2 = fun(t+0.25*h,x+0.25*h*dxdt_1,*args)
+        dxdt_3 = fun(t+0.375*h,x+h*(3*dxdt_1+9*dxdt_2)/32,*args)
+        dxdt_4 = fun(t+ 12*h/13,x+h*(1932*dxdt_1 - 7200*dxdt_2 +7296*dxdt_3)/2197,*args)
+        dxdt_5 = fun(t+h,x+h*(439*dxdt_1/216 - 8*dxdt_2 + 3680*dxdt_3/513 - 845*dxdt_4/4104),*args)
+        dxdt_6 = fun(t+0.5*h,x+h*(-8*dxdt_1/27 + 2*dxdt_2 - 3544*dxdt_3/2565 + 1895*dxdt_4/4104 - 0.275*dxdt_5),*args)
+
+        x = x + h*(16*dxdt_1/135 + 6656*dxdt_3/12825 + 28561*dxdt_4/56430 - 0.18*dxdt_5 + 2*dxdt_6/55)
+        xlist = np.concatenate((xlist,np.array([x])),axis = 0)
+
+        i += 1
+    
+    return tlist, xlist
+
+## implicit odesolvers
+def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e-5):
     """ 
     implicit ode solver using BDFx method and will return time list with equal timestep
     
@@ -184,7 +231,6 @@ def odeii(fun,t_start,initial,t_end,args=(),t_step = 1e-1,TOL = 1e-5,order:int =
             x = x - F/dFdx
 
             erf = np.abs(np.max(F,axis = None))
-            print(erf)
 
         ## update Mlist
         xlist = np.concatenate((xlist,np.array([x])),axis = 0)
@@ -195,49 +241,7 @@ def odeii(fun,t_start,initial,t_end,args=(),t_step = 1e-1,TOL = 1e-5,order:int =
     ## return
     return tlist,xlist
 
-def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-2,step_max = 1e-3,TOL = 1e-5):
-    """ 
-    explicit ode solver using RK45 method and will output the result in equal time step
-    
-    ***************************************
-    fun: fun(t,x,*args), return dx/dt function of the ode function to solve
-    t_start: start of the 'time'
-    initial: initial condition
-    t_end: end of the time
-    t_step: time step of the output timelist
-    step_max: max time step for ode solving
-    TOL: value to control the error
-    """
-    if tstep <= step_max:
-        ValueError('tstep should be larger than step_max')
-
-    tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
-
-    tlist = np.arange(t_start,t_end+tstep,tstep)
-    tlist.reshape(-1,1) # to [n,1] array
-    xlist = np.array([initial])
-    i = 1
-    while(i < np.size(tlist)):
-        n = np.sum((tlist0 <= tlist[i]),axis = None) - 1 # location of the nearest before time and step is lower than the TOLed step
-        
-        t = tlist0[n]
-        h = tlist[i] - tlist0[n]
-        x = xlist0[n]
-
-        dxdt_1 = fun(t,x,*args)
-        dxdt_2 = fun(t+0.25*h,x+0.25*h*dxdt_1,*args)
-        dxdt_3 = fun(t+0.375*h,x+h*(3*dxdt_1+9*dxdt_2)/32,*args)
-        dxdt_4 = fun(t+ 12*h/13,x+h*(1932*dxdt_1 - 7200*dxdt_2 +7296*dxdt_3)/2197,*args)
-        dxdt_5 = fun(t+h,x+h*(439*dxdt_1/216 - 8*dxdt_2 + 3680*dxdt_3/513 - 845*dxdt_4/4104),*args)
-        dxdt_6 = fun(t+0.5*h,x+h*(-8*dxdt_1/27 + 2*dxdt_2 - 3544*dxdt_3/2565 + 1895*dxdt_4/4104 - 0.275*dxdt_5),*args)
-
-        x = x + h*(16*dxdt_1/135 + 6656*dxdt_3/12825 + 28561*dxdt_4/56430 - 0.18*dxdt_5 + 2*dxdt_6/55)
-        xlist = np.concatenate((xlist,np.array([x])),axis = 0)
-
-        i += 1
-    
-    return tlist, xlist
-
+## tests
 def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1):
     """
     we do not recommend using this one to solve ode, but it may 
@@ -275,15 +279,15 @@ def ode_test(order):
     x0 = np.array([2,0])
     
     ## operate
-    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.08)
-    ttlist,xxlist = ode45(fun,tspan[0],x0,tspan[1],args = (3,))
+    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.1)
+    ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
     
     ## figrue
     plt.figure(1)
-    plt.plot(tlist,xlist[:,0],label = 'Positioni')
-    plt.plot(tlist,xlist[:,1],label = 'Velocityi')
-    plt.plot(ttlist,xxlist[:,0],label = 'Position23')
-    plt.plot(ttlist,xxlist[:,1],label = 'Velocity23')
+    plt.plot(tlist,xlist[:,0],label = 'Position_ii')
+    plt.plot(tlist,xlist[:,1],label = 'Velocity_ii')
+    plt.plot(ttlist,xxlist[:,0],label = 'Position_23')
+    plt.plot(ttlist,xxlist[:,1],label = 'Velocity_23')
     plt.legend()
     plt.show()
 
