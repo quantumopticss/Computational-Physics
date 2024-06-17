@@ -232,15 +232,20 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
     return (result*sgn)
 
 ### 1D discrete integral
-def int_integral(ylist,xlist,order = 4,TOL = 1e-6):
+def int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-6):
     """ discrete numerical integral, first do interpolation, and then numerical integrate
+        it will return the integrate result and a spline function for you to check the vaildity
+
         ylist: discrete sampling date from sensor you want to integrate over xlist 
         xlist: span over which you want to do integration about ylist
         order: value to control interpolate error 1 <= order <= 5
         TOL: value to control integrate error
+
+        the error is contributed both from numerical integration and spline progress, which will 
+        be influenced by the accuracy and fluctuations of your sampling data
     """
     from scipy.interpolate import UnivariateSpline
-    spline = UnivariateSpline(xlist,ylist,k = order)
+    spline = UnivariateSpline(xlist,ylist,k = order,s = smooth)
 
     fun = lambda x: spline(x)
     result = integral(fun,[xlist[0],xlist[-1]],(),TOL)
@@ -255,11 +260,19 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     #print(np.sqrt(-1+0j)) --> 1j
 
-    funy_up = lambda x: 1 
-    funy_down = lambda x: 0
-    xspan = [0,+np.infty]
-    S = integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-12)
-    print(S*1e10)
-    print(np.sqrt(np.pi)*1e10/6)
+    xlist = np.linspace(0,10,20)
+    ylist = np.sin(xlist) + 0.08*np.random.rand(20)
+    S,func = int_integral(ylist,xlist,order = 4,smooth = 0.01,TOL = 1e-8)
+    SS = 1 - np.cos(10)
+    print(SS-S)
+
+    plt.subplot(1,2,1)
+    xx = np.linspace(0,10,200)
+    plt.plot(xx,np.sin(xx))
+    plt.scatter(xlist,func(xlist),s = 10)
+
+    plt.subplot(1,2,2)
+    plt.plot(xlist,(func(xlist) - ylist))
+    plt.show()
 
     
