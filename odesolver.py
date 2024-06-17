@@ -227,7 +227,8 @@ def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e
         t = M_tlist[-1]
         while(erf >= TOL):
             F = x + bias - a*t_step*fun(t,x,*args)
-            dFdx = 1 - a*t_step*(fun(t,x+eps/2,*args)-fun(t,x-eps/2,*args))/eps
+            # ****** more accuracy
+            dFdx = 1 - a*t_step*(8*fun(t,x+eps/2,*args) - fun(t,x+eps,*args) -8*fun(t,x-eps/2,*args) + fun(t,x-eps,*args))/(6*eps) 
             x = x - F/dFdx
 
             erf = np.abs(np.max(F,axis = None))
