@@ -238,7 +238,10 @@ def int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-6):
 
         ylist: discrete sampling date from sensor you want to integrate over xlist 
         xlist: span over which you want to do integration about ylist
-        order: value to control interpolate error 1 <= order <= 5
+        order: value to control interpolate error 1 <= order <= 5.
+        smooth: value to control the spline process: smooth >= 0
+                    larger smooth value will get smoother cruves,  smaller value to be more like raw data
+                   'smooth = None' to use the default value in scipy.UnivariateSpline (discourage)
         TOL: value to control integrate error
 
         the error is contributed both from numerical integration and spline progress, which will 
@@ -262,7 +265,7 @@ if __name__ == "__main__":
 
     xlist = np.linspace(0,10,20)
     ylist = np.sin(xlist) + 0.08*np.random.rand(20)
-    S,func = int_integral(ylist,xlist,order = 4,smooth = 0.01,TOL = 1e-8)
+    S,func = int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-8)
     SS = 1 - np.cos(10)
     print(SS-S)
 
