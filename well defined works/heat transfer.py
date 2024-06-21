@@ -34,10 +34,10 @@ def ht_main():
     T0[:,-1] = Tl
     T0[f1:f2,0] = Tr_p
 
-    Q = np.zeros([N,N])
+    Q = np.ones([N,N])*(1e-4)
 
     # operate
-    tlist,Tlist = ode.ode45(ht_fun,tspan[0],T0,tspan[1],args = (h,k,Q,f1,f2),step_max = 0.1,TOL = 1e-1)
+    tlist,Tlist = ode.odeii(ht_fun,tspan[0],T0,tspan[1],args = (h,k,Q,f1,f2),order = 2,t_step = 0.0001,TOL = 1e-2)
 
     ## figure
     fig, ax = plt.subplots()

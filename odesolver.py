@@ -14,8 +14,8 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     TOL: value to control the error
     """
     ## begin and validity check
-    if t_start <= t_end:
-        ValueError('t_start should smaller than t_end') 
+    if t_start >= t_end:
+        return np.array([t_start]), np.array([initial])
 
     t = t_start
     h = step_max*1e-4
@@ -67,8 +67,8 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     TOL: value to control the error
     """
     ## begin and validity check
-    if t_start <= t_end:
-        ValueError('t_start should smaller than t_end') 
+    if t_start >= t_end:
+        return np.array([t_start]), np.array([initial])
 
     t = t_start
     h = step_max*1e-4
@@ -125,8 +125,10 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     step_max: max time step for ode solving
     TOL: value to control the error
     """
-    if tstep <= step_max:
-        ValueError('tstep should be larger than step_max')
+    if t_start >= t_end:
+        return np.array([t_start]), np.array([initial])
+    if tstep >= step_max:
+        ValueError('tstep should be smaller than step_max')
 
     tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
 
@@ -169,10 +171,10 @@ def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e
     order(int): order of BDF, range from 2 to 6
     """
     ## begin and validity check
-    if t_start <= t_end:
-        ValueError('t_start should smaller than t_end') 
+    if t_start >= t_end:
+        return np.array([t_start]), np.array([initial])
     if order > 6 or order < 2:
-        ValueError('Supported BDFs\' order should be integer range from 2 to 6')
+        raise ValueError('Supported BDFs\' order should be integer range from 2 to 6')
 
     ## start BDF
     # _, means there is a return value but we do not use it
@@ -209,7 +211,8 @@ def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e
             LMM = t_step*np.array([4277,-7923,9982,-7898,2877,-475])/1440
             a = 60/147
 
-    BDF = BDF[:,np.newaxis]
+    shape = [order] + [1]*(xlist.ndim - 1)
+    BDF = BDF.reshape(shape)
     eps = 1e-5
     i = order
     while(i < N):
@@ -218,17 +221,17 @@ def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e
         erf = 1
         ## use LMM4 to estimate a value 
         x = M_xlist[-1]
-        j = 0
-        while (j<np.size(LMM)):
+
+        for j in range(order):
             x = x + LMM[j]*fun(M_tlist[j],M_xlist[j],*args)
-            j += 1
 
         M_tlist = M_tlist + t_step
         t = M_tlist[-1]
         while(erf >= TOL):
             F = x + bias - a*t_step*fun(t,x,*args)
             # ****** more accuracy
-            dFdx = 1 - a*t_step*(8*fun(t,x+eps/2,*args) - fun(t,x+eps,*args) -8*fun(t,x-eps/2,*args) + fun(t,x-eps,*args))/(6*eps) 
+            #### dFdx = 1 - a*t_step*(8*fun(t,x+eps/2,*args) - fun(t,x+eps,*args) -8*fun(t,x-eps/2,*args) + fun(t,x-eps,*args))/(6*eps) 
+            dFdx = 1 - a*t_step*(fun(t,x+eps/2,*args) - fun(t,x-eps/2,*args) )/(eps) 
             x = x - F/dFdx
 
             erf = np.abs(np.max(F,axis = None))
@@ -249,8 +252,8 @@ def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1):
     help when debuging or testing, parameters set are the same as other odesolvers 
     """
 ## begin and validity check
-    if t_start <= t_end:
-        ValueError('t_start should smaller than t_end') 
+    if t_start >= t_end:
+        return np.array([t_start]), np.array([initial])
 
     t = t_start
     x = initial
@@ -280,7 +283,7 @@ def ode_test(order):
     x0 = np.array([2,0])
     
     ## operate
-    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.1)
+    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.007)
     ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
     
     ## figrue
@@ -305,5 +308,5 @@ def ode_test(order):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    order = 4
-    ode_test(order)
+    ord = 1
+    ode_test(ord)
