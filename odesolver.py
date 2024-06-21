@@ -127,8 +127,8 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     """
     if t_start >= t_end:
         return np.array([t_start]), np.array([initial])
-    if tstep >= step_max:
-        ValueError('tstep should be smaller than step_max')
+    if tstep < step_max:
+        raise ValueError('tstep should be larger than step_max')
 
     tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
 
@@ -158,7 +158,7 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     return tlist, xlist
 
 ## implicit odesolvers
-def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 1e-1,TOL = 1e-5):
+def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 5*1e-2,TOL = 1e-5):
     """ 
     implicit ode solver using BDFx method and will return time list with equal timestep
     
@@ -283,7 +283,7 @@ def ode_test(order):
     x0 = np.array([2,0])
     
     ## operate
-    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.007)
+    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.01)
     ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
     
     ## figrue
@@ -308,5 +308,5 @@ def ode_test(order):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    ord = 1
+    ord = 3
     ode_test(ord)
