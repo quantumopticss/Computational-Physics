@@ -12,21 +12,19 @@ def crw_main():
     
     ## operate
     np.random.seed(seed)         # set random seed
-    rho_list = np.zeros([1,rounds])
+    rho_list = np.zeros([rounds])
     rds = 0
     while(rds<rounds):
-        rho_list[0,rds] = crw_operate_2(steps,a,"distance")
+        rho_list[rds] = crw_operate_2(steps,a,"distance")
         rds += 1
 
     xlist,ylist = crw_operate_2(steps,a,"array")
 
     ## figure
     plt.figure(1)
-    hist,edge = np.histogram(rho_list,bins = 15)
-    hist = hist/rounds
+    hist,edge = np.histogram(rho_list,bins = 15,density = True)
     dist = 0.5*(edge[0:-1] + edge[1:])
-    prob = hist/(2*np.pi*dist)
-    plt.plot(dist,prob)
+    plt.plot(dist,hist)
     plt.xlabel("Endpoint Distance R")
     plt.ylabel("Frequencies")
     plt.title(f"disperse density step = {steps} with average time = {rounds} @ overleaf radius a = {a}")

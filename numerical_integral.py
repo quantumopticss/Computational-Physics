@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.integrate import quad
 ### 1D integral
 def integral_subcalculate(fun,x_start,x_end,args = ()):
     # calculate a small integrate over xspan
@@ -65,7 +66,7 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
     ## integral
     match process:
         case [0,1]:
-            step = 10
+            step = 1
             result = integral_operate(fun,[x0,x0+step],args,TOL)
             e = 1
             while(e>=TOL):
@@ -75,7 +76,7 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
                 e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,0]:
-            step = 10
+            step = 1
             result = integral_operate(fun,[x1-step,x1],args,TOL)
             e = 1
             while(e>=TOL):
@@ -87,7 +88,7 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
         case [-1,1]:
             # [0,1]
             x0 = 0
-            step = 10
+            step = 1
             result_f = integral_operate(fun,[x0,x0+step],args,TOL)
             e = 1
             x0 += step
@@ -183,7 +184,7 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
     ## integral -- integral2D_operate(yxfun,funy_down,funy_up,xspan,args,TOL)
     match process:
         case [0,1]:
-            step = 10
+            step = 1
             result = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
             e = 1
             while(e>=TOL):
@@ -193,7 +194,7 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
                 e = np.abs( add/np.max([np.abs(result),1])  )
 
         case [-1,0]:
-            step = 10
+            step = 1
             result = integral2D_operate(yxfun,funy_down,funy_up,[x1-step,x1],args,TOL)
             e = 1
             while(e>=TOL):
@@ -205,7 +206,7 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
         case [-1,1]:
             # [0,1]
             x0 = 0
-            step = 10
+            step = 1
             result_f = integral2D_operate(yxfun,funy_down,funy_up,[x0,x0+step],args,TOL)
             e = 1
             while(e>=TOL):
@@ -259,23 +260,15 @@ def yxfun(y,x):
     f = y**2*np.exp(-x**2)
     return f
 
+def fun(x):
+    f = np.sin(x)/(2 - np.sin(x))
+    return f
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     #print(np.sqrt(-1+0j)) --> 1j
-
-    xlist = np.linspace(0,10,20)
-    ylist = np.sin(xlist) + 0.08*np.random.rand(20)
-    S,func = int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-8)
-    SS = 1 - np.cos(10)
-    print(SS-S)
-
-    plt.subplot(1,2,1)
-    xx = np.linspace(0,10,200)
-    plt.plot(xx,np.sin(xx))
-    plt.scatter(xlist,func(xlist),s = 10)
-
-    plt.subplot(1,2,2)
-    plt.plot(xlist,(func(xlist) - ylist))
-    plt.show()
+    SS = quad(fun,0,2*np.pi)
+    print(SS[0])
+    print(4*np.pi/np.sqrt(3) - 2*np.pi)
 
     

@@ -45,7 +45,7 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
             t += h
             tlist = np.vstack((tlist,t))
             xlist = np.concatenate((xlist,np.array([x])),axis = 0)
-            h = np.min([(1/(Z+TOL**2))**(1/3),step_max])
+            h = np.min([(h/(Z+TOL**2))**(1/3),step_max])
         else:
             h *= 0.7*((1/(Z+TOL**2))**(1/3))
             continue
@@ -163,7 +163,7 @@ def ode23i(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
             x = xi
             tlist = np.vstack((tlist,t))
             xlist = np.concatenate((xlist,np.array([x])),axis = 0)
-            h = np.min([(1/(Z+TOL**2))**(1/3),step_max])
+            h = np.min([(h/(Z+TOL**2))**(1/3),step_max])
         else:
             h *= 0.7*((1/(Z+TOL**2))**(1/3))
             continue
