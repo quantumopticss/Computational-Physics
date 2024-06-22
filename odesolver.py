@@ -4,6 +4,14 @@ import numpy as np
 def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     """ 
     explicit ode solver using RK23 method
+
+    return tlist, xlist 
+
+    solutions of different time are stacked in axis = 0
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
     
     ***************************************
     fun: fun(t,x,*args), return dx/dt function of the ode function to solve
@@ -36,7 +44,7 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
         delta_3 = h*(dxdt_1 + 4*dxdt_2 + dxdt_3)/6
         ## justify
         e = delta_3 - delta_2
-        f = np.max([np.abs(x),auxi],0)
+        f = np.max([np.abs(x),auxi],axis = 0)
         rato = np.abs(e/f)
 
         ## results
@@ -57,6 +65,14 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
 def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     """ 
     explicit ode solver using RK45 method
+
+    return tlist, xlist 
+
+    solutions of different time are stacked in axis = 0
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
     
     ***************************************
     fun: fun(t,x,*args), return dx/dt function of the ode function to solve
@@ -92,7 +108,7 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
         delta_5 = h*(16*dxdt_1/135 + 6656*dxdt_3/12825 + 28561*dxdt_4/56430 - 0.18*dxdt_5 + 2*dxdt_6/55)
         ## justify
         e = delta_5 - delta_4
-        f = np.max([np.abs(x),auxi],0)
+        f = np.max([np.abs(x),auxi],axis = 0)
         rato = np.abs(e/f)
 
         ## results
@@ -115,7 +131,13 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
 def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 1e-5):
     """ 
     explicit ode solver using RK45 method and will output the result in equal time step
-    
+
+    return tlist, xlist 
+
+    solutions of different time are stacked in axis = 0
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
+
     ***************************************
     fun: fun(t,x,*args), return dx/dt function of the ode function to solve
     t_start: start of the 'time'
@@ -158,10 +180,15 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     return tlist, xlist
 
 ## implicit odesolvers
-def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 5*1e-2,TOL = 1e-5):
+def odeii(fun,t_start,initial,t_end,args=(),t_step = 5*1e-2,TOL = 1e-5,order:int = 4):
     """ 
     implicit ode solver using BDFx method and will return time list with equal timestep
-    
+
+    return tlist, xlist 
+
+    solutions of different time are stacked in axis = 0
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]    
     ***************************************
     fun: fun(t,x,*args), return dx/dt function of the ode function to solve
     t_start: start of the 'time'
@@ -248,7 +275,16 @@ def odeii(fun,t_start,initial,t_end,args=(),order:int = 4,t_step = 5*1e-2,TOL = 
 ## tests
 def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1):
     """
-    we do not recommend using this one to solve ode, but it may 
+    A test odesolver work for debugging
+
+    return tlist, xlist 
+
+    solutions of different time are stacked in axis = 0
+
+    t_N = tlist[N,0] ; x_N = xlist[N,...]  
+
+    Attention!!! 
+    We do not recommend using this one to solve ode, but it may 
     help when debuging or testing, parameters set are the same as other odesolvers 
     """
 ## begin and validity check
