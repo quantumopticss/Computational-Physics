@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import quad
 ### 1D integral
-def integral_subcalculate(fun,x_start,x_end,args = ()):
+def integral_subcalculate(fun,x_start:float,x_end:float,args:tuple = ()) -> float:
     # calculate a small integrate over xspan
 
     Xlist4 = np.linspace(0,1,5,endpoint = True)*(x_end - x_start) + x_start
@@ -11,7 +11,7 @@ def integral_subcalculate(fun,x_start,x_end,args = ()):
     I = (np.sum(Co_4*i4,axis = None))*(x_end - x_start)/90
     return I
 
-def integral_operate(fun,xspan,args = (),TOL = 1e-6):
+def integral_operate(fun,xspan: np.ndarray,args:tuple = (),TOL:float = 1e-6) -> float:
     N = 8
     int_space = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
@@ -38,7 +38,7 @@ def integral_operate(fun,xspan,args = (),TOL = 1e-6):
     
     return result
 
-def integral(fun,xspan,args = (),TOL = 1e-6):
+def integral(fun,xspan: np.ndarray,args:tuple = (),TOL: float = 1e-6) -> float:
     """ numerical integral
         support complex function: np.sqrt(-1+0j) = 1j
         fun:  function to integrate,
@@ -116,7 +116,7 @@ def integral(fun,xspan,args = (),TOL = 1e-6):
     return (result*sgn)
 
 ### 2D integral
-def integral2D_subcalculate(yxfun,funy_down,funy_up,x_start,x_end,args=()):
+def integral2D_subcalculate(yxfun,funy_down,funy_up,x_start:float,x_end:float,args:tuple=()) -> float:
     xlist = np.linspace(x_start,x_end,5,endpoint = True)
     Co_4 = np.array([7,32,12,32,7])
     result = 0
@@ -128,7 +128,7 @@ def integral2D_subcalculate(yxfun,funy_down,funy_up,x_start,x_end,args=()):
 
     return (result*(x_end - x_start)/90)
 
-def integral2D_operate(yxfun,funy_down,funy_up,xspan,args=(),TOL = 1e-6):
+def integral2D_operate(yxfun,funy_down,funy_up,xspan: np.ndarray,args:tuple=(),TOL:float = 1e-6) -> float:
     N = 8
     int_xspace = np.linspace(xspan[0],xspan[1],N,endpoint = True)
     result = 0
@@ -155,7 +155,7 @@ def integral2D_operate(yxfun,funy_down,funy_up,xspan,args=(),TOL = 1e-6):
     
     return result
 
-def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
+def integral2D(yxfun,funy_down,funy_up,xspan:np.ndarray,args:tuple = (),TOL:float = 1e-6) -> float:
     """ 2D numerical integral
         support complex function: np.sqrt(-1+0j) = 1j
         yxfun: function to integrate, but you should use function of this form: func(y,x,*args)
@@ -233,11 +233,11 @@ def integral2D(yxfun,funy_down,funy_up,xspan,args = (),TOL = 1e-6):
     return (result*sgn)
 
 ### 1D discrete integral
-def int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-6):
+def int_integral(ylist:np.ndarray,xlist:np.ndarray,order:int = 4,smooth:float = 0.02,TOL:float = 1e-6) -> float:
     """ discrete numerical integral, first do interpolation, and then numerical integrate
         it will return the integrate result and a spline function for you to check the vaildity
 
-        ylist: discrete sampling date from sensor you want to integrate over xlist 
+        ylist: discrete sampling date from sensor you want to integrate over xlist opi
         xlist: span over which you want to do integration about ylist
         order: value to control interpolate error 1 <= order <= 5.
         smooth: value to control the spline process: smooth >= 0
@@ -249,9 +249,9 @@ def int_integral(ylist,xlist,order = 4,smooth = 0.02,TOL = 1e-6):
         be influenced by the accuracy and fluctuations of your sampling data
     """
     from scipy.interpolate import UnivariateSpline
-    spline = UnivariateSpline(xlist,ylist,k = order,s = smooth)
-
+    spline = UnivariateSpline(xlist,ylist,k = order,s = smooth) ## get interpolate function
     fun = lambda x: spline(x)
+
     result = integral(fun,[xlist[0],xlist[-1]],(),TOL)
     return result,fun
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 ## explicit odesolvers
-def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+def ode23(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),step_max: float = 1e-2,TOL: float = 1e-5) -> tuple[np.ndarray,np.ndarray]:
     """ 
     explicit ode solver using RK23 method
 
@@ -62,7 +62,7 @@ def ode23(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
     ## return
     return tlist,xlist
 
-def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
+def ode45(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),step_max: float = 1e-2,TOL: float = 1e-5) -> tuple[np.ndarray,np.ndarray]:
     """ 
     explicit ode solver using RK45 method
 
@@ -128,7 +128,7 @@ def ode45(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
 
 #def ode89(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1e-5):
 
-def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 1e-5):
+def odeint(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),t_step:float = 1e-1 ,step_max: float = 1e-2,TOL: float = 1e-5) -> tuple[np.ndarray,np.ndarray]:
     """ 
     explicit ode solver using RK45 method and will output the result in equal time step
 
@@ -149,12 +149,12 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     """
     if t_start >= t_end:
         return np.array([t_start]), np.array([initial])
-    if tstep < step_max:
+    if t_step < step_max:
         raise ValueError('tstep should be larger than step_max')
 
     tlist0,xlist0 = ode45(fun,t_start,initial,t_end,args,step_max,TOL)
 
-    tlist = np.arange(t_start,t_end+tstep,tstep)
+    tlist = np.arange(t_start,t_end+t_step,t_step)
     tlist.reshape(-1,1) # to [n,1] array
     xlist = np.array([initial])
     i = 1
@@ -180,7 +180,7 @@ def odeint(fun,t_start,initial,t_end,args=(),tstep = 1e-1,step_max = 1e-2,TOL = 
     return tlist, xlist
 
 ## implicit odesolvers
-def odeii(fun,t_start,initial,t_end,args=(),t_step = 5*1e-2,TOL = 1e-5,order:int = 4):
+def odeii(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),t_step: float = 1e-2,TOL: float = 1e-5,order:int = 4) -> tuple[np.ndarray,np.ndarray]:
     """ 
     implicit ode solver using BDFx method and will return time list with equal timestep
 
@@ -205,7 +205,7 @@ def odeii(fun,t_start,initial,t_end,args=(),t_step = 5*1e-2,TOL = 1e-5,order:int
 
     ## start BDF
     # _, means there is a return value but we do not use it
-    M_tlist, xlist = odeint(fun,t_start,initial,(t_start + (order)*t_step),args,tstep = t_step,step_max = t_step/10,TOL = TOL*0.01)
+    M_tlist, xlist = odeint(fun,t_start,initial,(t_start + (order)*t_step),args,t_step = t_step,step_max = t_step/10,TOL = TOL*0.01)
     M_tlist = M_tlist[0:order,...]
     xlist = xlist[0:order,...]
     M_xlist = np.copy(xlist)
@@ -273,7 +273,7 @@ def odeii(fun,t_start,initial,t_end,args=(),t_step = 5*1e-2,TOL = 1e-5,order:int
     return tlist,xlist
 
 ## tests
-def ode00(fun,t_start,initial,t_end,args=(),step_max = 1e-2,TOL = 1):
+def ode00(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),step_max: float = 1e-2,TOL: float = 1e-5) -> tuple[np.ndarray,np.ndarray]:
     """
     A test odesolver work for debugging
 
@@ -315,11 +315,11 @@ def fun(t,x,w):
 
 def ode_test(order):
     ## users set
-    tspan = np.array([0,4])
+    tspan = np.array([0,3])
     x0 = np.array([2,0])
     
     ## operate
-    tlist,xlist = odeii(fun,tspan[0],x0,tspan[1],args = (3,),order = order,t_step = 0.01)
+    tlist,xlist = odeii(fun,0,x0,3,args = (3,),order = order,t_step = 0.06)
     ttlist,xxlist = ode23(fun,tspan[0],x0,tspan[1],args = (3,))
     
     ## figrue
