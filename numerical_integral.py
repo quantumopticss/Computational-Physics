@@ -255,20 +255,66 @@ def int_integral(ylist:np.ndarray,xlist:np.ndarray,order:int = 4,smooth:float = 
     result = integral(fun,[xlist[0],xlist[-1]],(),TOL)
     return result,fun
 
+def fft(ylist):
+    '''
+    tlist: sampling time list
+    ylist: data list, corresponding to tlist
+
+    sampling frequenncy: f = 2*F_N, Nyquist frequency F_N is the frequency only under which can a phenomenon be analyzed by this fft
+    frequency resolution: delta_f = 1/T, T is the whole time of tlist
+    a[n], n = np.arange(0,,N), frequency list of fft
+    '''
+    N = len(ylist)
+    nlist = np.arange(N)
+    an = np.empty_like(nlist,dtype = complex)
+    
+    for n in nlist:
+        philist = np.exp(1j*2*np.pi*n*nlist/N)
+        an[n] = np.sum(ylist*philist,axis = None)
+    
+    return an 
+
+def fftfreq(length:int,delta_t:float):
+    '''
+    lenth: lenth of fft list
+    dt: sampling retardation between two neighbour data in tlist 
+    '''
+    val = 1/(length*delta_t)
+    flist_p = np.arange(0,length//2)
+    flist_n = np.arange(-length//2,0)
+
+    flist = np.concatenate((flist_p,flist_n),axis = 0)*val
+    return flist
+
+def fftshift(list):
+    N = len(list)
+    shift_list = np.concatenate((list[N//2:],list[0:N//2-1]),axis = 0)
+    return shift_list
+
 # testing functions  
 def yxfun(y,x):
     f = y**2*np.exp(-x**2)
     return f
 
 def fun(x):
-    f = np.sin(x)/(2 - np.sin(x))
+    f = 2*np.cos(2*np.pi*x)
     return f
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     #print(np.sqrt(-1+0j)) --> 1j
-    SS = quad(fun,0,2*np.pi)
-    print(SS[0])
-    print(4*np.pi/np.sqrt(3) - 2*np.pi)
+    f = 100
+    T = 4
+    tlist = np.linspace(0,T,T*f)
+    ylist = fun(tlist)
+
+    yf = fftshift(fft(ylist))/len(ylist)
+    tf = fftshift(fftfreq(len(ylist),1/f))
+    print(np.sum(np.abs(yf)**2,axis = None))
+
+    plt.figure(1)
+    plt.plot(tf,np.abs(yf))
+    plt.show()
+
 
     
