@@ -255,8 +255,16 @@ def int_integral(ylist:np.ndarray,xlist:np.ndarray,order:int = 4,smooth:float = 
     result = integral(fun,[xlist[0],xlist[-1]],(),TOL)
     return result,fun
 
-def fft(ylist):
+def fft(ylist:np.ndarray) -> np.ndarray:
     '''
+    
+    f_n = (1/N) * sum_{i = 0}^{N - 1} F_i * exp(-1i * 2*pi*n*i/N)
+    
+    F_n = sum_{n = 0}^{N - 1} f_j * exp(1i * 2*pi*n*j/N )
+    
+    traditional DFT algorithm for understanding how fft whorks
+    we suggest to use np's fft function for numerical computation
+
     tlist: sampling time list
     ylist: data list, corresponding to tlist
 
@@ -265,16 +273,18 @@ def fft(ylist):
     a[n], n = np.arange(0,,N), frequency list of fft
     '''
     N = len(ylist)
-    nlist = np.arange(N)
+    nlist = np.arange(N) # 0,1,2,...,(N-1)
     an = np.empty_like(nlist,dtype = complex)
     
-    for n in nlist:
-        philist = np.exp(1j*2*np.pi*n*nlist/N)
-        an[n] = np.sum(ylist*philist,axis = None)
+    philist = np.empty([N,N])
+    for n in range(N):
+        philist[:,n] = np.exp(1j*2*np.pi*n*nlist/N)
+    
+    an = ylist @ philist
     
     return an 
 
-def fftfreq(length:int,delta_t:float):
+def fftfreq(length:int,delta_t:float) -> np.ndarray:
     '''
     lenth: lenth of fft list
     dt: sampling retardation between two neighbour data in tlist 
@@ -286,7 +296,12 @@ def fftfreq(length:int,delta_t:float):
     flist = np.concatenate((flist_p,flist_n),axis = 0)*val
     return flist
 
-def fftshift(list):
+def fftshift(list:np.ndarray) -> np.ndarray:
+    """
+    1D fftshift:
+    
+    shift fftlist so as to let the DC component at the center of the list
+    """
     N = len(list)
     shift_list = np.concatenate((list[N//2:],list[0:N//2-1]),axis = 0)
     return shift_list

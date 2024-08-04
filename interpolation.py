@@ -25,7 +25,6 @@ def interpolate_lag(xlist,ylist):
 
     return fun 
 
-
 def ip_test():
     xlist = np.linspace(0,3,5)
     tfun = lambda x: np.sin(x)
@@ -42,7 +41,6 @@ def ip_test():
     plt.scatter(xlist,ylist,label = 'sample point')
     plt.legend()
     plt.show()
-
 
 if __name__ == "__main__":
     ip_test()

@@ -22,7 +22,7 @@ def ab_operate(B,nu0,vec,vec_basic,gamma_up_Lc,gamma_up_L,gamma_up_Rc,nu_up,gamm
     c_const = 2.998*1e8
     m_Na = 23*1e-3
     d_Na = 0.186*1e-9
-    f_col = 4*N*np.pi*d_Na**2 * np.sqrt(8.31*T_ab/(np.pi*m_Na))
+    f_col = 4*N*np.pi* (12*d_Na)**2 * np.sqrt(8.31*T_ab/(np.pi*m_Na))
 
     delta_nu_L_line = 1/(2*np.pi) *(1/tsp_Na_line + 2*f_col)/1e12 # in THz
     delta_nu_L_ab = 1/(2*np.pi) *(1/tsp_Na_ab + 2*f_col)/1e12
