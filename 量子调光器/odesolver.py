@@ -257,7 +257,7 @@ def odeii(fun,t_start: float,initial: np.ndarray,t_end: float,args:tuple=(),t_st
         while(erf >= TOL):
             F = x + bias - a*t_step*fun(t,x,*args)
             # ****** more accuracy
-            #### dFdx = 1 - a*t_step*(16*fun(t,x+eps/2,*args) - fun(t,x+eps,*args) - 16*fun(t,x-eps/2,*args) + fun(t,x-eps,*args))/(14*eps) 
+            #### dFdx = 1 - a*t_step*(8*fun(t,x+eps/2,*args) - fun(t,x+eps,*args) -8*fun(t,x-eps/2,*args) + fun(t,x-eps,*args))/(6*eps) 
             dFdx = 1 - a*t_step*(fun(t,x+eps/2,*args) - fun(t,x-eps/2,*args) )/(eps) 
             x = x - F/dFdx
 

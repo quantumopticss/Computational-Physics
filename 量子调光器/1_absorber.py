@@ -196,7 +196,7 @@ def ab_Bline():
             g[i,:] = g[i,:] + voigt_profile(nulist - nub,delta_nu_G_ab,delta_nu_L_ab)
         
         i += 1
-            
+
     ## figure
     fig, ax = plt.subplots()
     anim = FuncAnimation(fig, update, frames = Nb,interval=200,fargs = (ax,nulist,g,B))
