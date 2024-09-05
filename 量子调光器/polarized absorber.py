@@ -212,7 +212,6 @@ def ani_abline():
     B = np.hstack((np.arange(0,0.3,0.05),np.arange(0.3,4.3,0.2)))
 
     f_col_ab = np.sqrt(2)*pi*d_Na**2*np.sqrt(8*8.31*T_ab/(pi*m_Na))*N_ab
-    fig, ax = plt.subplots()
     
     # g is lineshape dictionary which store information of each lines
     g_ab_total  = np.empty([len(B),len(nulist)])
@@ -250,6 +249,7 @@ def ani_abline():
         g_ab_total[k,:] = G_ab_total(nulist)
         
     ## figure
+    fig, ax = plt.subplots()
     anim = FuncAnimation(fig, update, frames = len(B),interval=200,fargs = (ax,G_emit_total,g_ab_total,B))    
     anim.save('MM_Magnetic field for linefunction.gif', writer='imagemagick')
 
