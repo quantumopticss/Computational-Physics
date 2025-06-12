@@ -10,6 +10,7 @@ using powerful tools including **numpy, scipy** and useful visualization tool in
 # What the code is:
 This code base privide **some coding results** from homeworks. Let's use ode (ordinary derivative equation, 常微分方程) as an example : 
 usually you will be told Eular methods, backward Eular method. But do you know why these methods can work and what do they do?
+
 $$
 y_{n+1} = y_n + f(y_n,x_n) * dx \hspace{0.5cm} \text{Eular method}
 \\
