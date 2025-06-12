@@ -18,11 +18,11 @@ y_{n+1} &= y_n + f(y_n,x_n) * dx \hspace{0.5cm} \text{Eular method}
 y_{n+1} &= y_n + f(y_{n+1},x_{n+1}) * dx \hspace{0.5cm} \text{Backward Eular method}
 \\
 y_{n+1} &= y_n + \frac{1}{2} \left[f(y_n,x_n) + f(y_n+f(y_n,x_n)*dx,x_n)\right] * dx \hspace{0.5cm} \text{Two Step Eular method}
-\\
 \end{align}
 $$
 
-The Reason that you will learn is that all these methods are different approaching of Taylor Series (泰勒级数)
+The reason is that these methods are different approaching of Taylor Series (泰勒级数),
+but how to get these formulars? And how to use these formulars to get powerful codes?
 
 # How to use this code?
 You are strongly recommended learning and rebuilding this code base, when you are learning Computational Physica(计算物理)
