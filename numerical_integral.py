@@ -258,9 +258,9 @@ def int_integral(ylist:np.ndarray,xlist:np.ndarray,order:int = 4,smooth:float = 
 def fft(ylist:np.ndarray) -> np.ndarray:
     '''
     
-    f_n = (1/N) * sum_{i = 0}^{N - 1} F_i * exp(-1i * 2*pi*n*i/N)
+    f_n = (1/N) * sum_{i = 0}^{N - 1} F_i * exp(1i * 2*pi*n*i/N)
     
-    F_n = sum_{n = 0}^{N - 1} f_j * exp(1i * 2*pi*n*j/N )
+    F_n = sum_{n = 0}^{N - 1} f_j * exp(-1i * 2*pi*n*j/N )
     
     traditional DFT algorithm for understanding how fft whorks
     we suggest to use np's fft function for numerical computation
