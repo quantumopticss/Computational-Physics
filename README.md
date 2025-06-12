@@ -22,7 +22,7 @@ $$
 The Reason that you will learn is that all these methods are different approaching of Taylor Series (泰勒级数)
 
 # How to use:
-You are strongly suggested learning and rebuilding this code base, when you are learning Computational Physica(计算物理)
+You are strongly recommended learning and rebuilding this code base, when you are learning Computational Physica(计算物理)
 Just follow the classes, and rebuild what the teacher told you, and compair what you do with this codebase
 
 
