@@ -3,11 +3,11 @@ Zifeng Li's code for **Computational Physics(计算物理)**,
 you can find some classic topics, including **OdeSolver， Numerical Integral， Interpolation，PDE Equation from Ode** Here,
 Some interesting problems like **Ising Model, Kuramoto Model, DLA Model, ...** are also up for grabs.
 
-# What you can get?
+# What can you learn?
 You can **Learn Basic Coding Skills** and use **dynamic Programming Language(Python) to solve practial problems**, you will learn how to
 using powerful tools including **numpy, scipy** and useful visualization tool including **matplotlib, seaborn**. If you prefer, you can build fundamental tools like **fft, odesolver** for yourself.
 
-# What the code is:
+# What the code is?
 This code base privide **some coding results** from homeworks. Let's use ode (ordinary derivative equation, 常微分方程) as an example : 
 usually you will be told Eular methods, backward Eular method. But do you know why these methods can work and what do they do?
 
@@ -22,7 +22,7 @@ $$
 
 The Reason that you will learn is that all these methods are different approaching of Taylor Series (泰勒级数)
 
-# How to use:
+# How to use this code?
 You are strongly recommended learning and rebuilding this code base, when you are learning Computational Physica(计算物理)
 Just follow the classes, and rebuild what the teacher told you, and compair what you do with this codebase
 
